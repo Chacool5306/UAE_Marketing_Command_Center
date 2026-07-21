@@ -124,8 +124,89 @@ let state={page:"executiveSummary",country:"UAE",period:"YTD",data:{},charts:{}}
 
 // Data Loading
 async function loadAll(){setLoading(true);const entries=Object.entries(SHEET_URLS);const loaded={};for(const [key,url] of entries){loaded[key]=await loadCsv(url,key)}state.data=loaded;document.getElementById('lastLoaded').textContent=new Date().toLocaleString();setLoading(false);renderAll()}
-function loadCsv(url,key){return new Promise(resolve=>{if(!url||!String(url).trim()){resolve(USE_SAMPLE_DATA_IF_EMPTY?(SAMPLE_DATA[key]||[]):[]);return}Papa.parse(url,{download:true,header:true,skipEmptyLines:true,dynamicTyping:true,complete:r=>resolve(cleanRows(r.data||[])),error:()=>resolve(USE_SAMPLE_DATA_IF_EMPTY?(SAMPLE_DATA[key]||[]):[])})})}
-function cleanRows(rows){return rows.map(r=>{const o={};Object.keys(r||{}).forEach(k=>o[String(k).trim()]=r[k]);return o}).filter(r=>Object.values(r).some(v=>v!==null&&v!==undefined&&String(v).trim()!==''))}
+
+function loadCsv(url, key) {
+
+  return new Promise(resolve => {
+
+    if (!url || !String(url).trim()) {
+      resolve([]);
+      return;
+    }
+
+    Papa.parse(url, {
+
+      download: true,
+      header: false,
+      dynamicTyping: true,
+      skipEmptyLines: false,
+
+      complete: (result) => {
+        resolve(normalizeCsvRows(result.data || []));
+      },
+
+      error: () => {
+        resolve([]);
+      }
+
+    });
+
+  });
+
+}
+
+function normalizeCsvRows(rawRows) {
+
+  const rows = (rawRows || []).filter(row =>
+    Array.isArray(row) &&
+    row.some(cell =>
+      cell !== null &&
+      cell !== undefined &&
+      String(cell).trim() !== ""
+    )
+  );
+
+  const headerIndex = rows.findIndex(row =>
+    row.some(cell =>
+      String(cell || "").trim() === "Country"
+    )
+  );
+
+  if (headerIndex === -1) {
+    return [];
+  }
+
+  const headers = rows[headerIndex].map(h =>
+    String(h || "").trim()
+  );
+
+  return rows
+    .slice(headerIndex + 1)
+    .map(row => {
+
+      const obj = {};
+
+      headers.forEach((header, index) => {
+
+        if (!header) return;
+
+        obj[header] = row[index];
+
+      });
+
+      return obj;
+
+    })
+    .filter(row =>
+      Object.values(row).some(v =>
+        v !== null &&
+        v !== undefined &&
+        String(v).trim() !== ""
+      )
+    );
+
+}
+
 
 // Data Processing
 function rows(key){return (state.data[key]||[]).filter(r=>{const c=get(r,['Country','country','Market','market']);const p=get(r,['Period','period','Quarter','quarter']);return(state.country==='All'||!c||String(c).toLowerCase()===state.country.toLowerCase())&&(state.period==='YTD'||!p||String(p).toLowerCase()===state.period.toLowerCase())})}
