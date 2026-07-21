@@ -275,7 +275,20 @@ function destroyCharts(){Object.keys(state.charts).forEach(k=>{state.charts[k].d
 // Utilities
 function fx(){const r=(state.data.fxSettings||SAMPLE_DATA.fxSettings||[])[0]||{};return n(get(r,['USD/AED Rate']))||3.6725}
 function money(v,cur){v=n(v);if(!v)return '-';if(Math.abs(v)>=1000000)return `${cur} ${(v/1000000).toFixed(1)}M`;if(Math.abs(v)>=1000)return `${cur} ${Math.round(v/1000).toLocaleString()}K`;return `${cur} ${v.toLocaleString(undefined,{maximumFractionDigits:1})}`}
-function pct(v){v=n(v);if(!v)return '-';return `${(v*100).toFixed(1)}%`}
+function percentPoint(v){
+  const x = n(v);
+  if (!x) return 0;
+
+  // Google Sheets CSV에서 %가 0.62로 오면 62.0으로 변환
+  // 62 또는 62%처럼 이미 퍼센트 값으로 오면 그대로 사용
+  return Math.abs(x) > 1 ? x : x * 100;
+}
+
+function pct(v){
+  const x = percentPoint(v);
+  if (!x) return '-';
+  return `${x.toFixed(1)}%`;
+}
 function isNum(c){return /AED|USD|%|ROAS|ROI|Sales|Budget|Spend|Impact|Quantity|Facing|Stores|Reach|Impressions|Engagement|Views/i.test(c)}
 function cell(v,c){if(v===null||v===undefined||v==='')return '-';if(c&&c.includes('%')&&typeof v==='number')return pct(v);if(/Status|Priority|Threat Level/i.test(c))return statusPill(v);if(/Link/i.test(c)){return v?`<a href="${esc(v)}" target="_blank" rel="noopener">Open</a>`:'-'}if(typeof v==='number'){if(/AED/i.test(c))return money(v,'AED');if(/USD/i.test(c))return money(v,'USD');return v.toLocaleString(undefined,{maximumFractionDigits:2})}return esc(v)}
 function statusPill(v){const text=s(v)||'-';const l=text.toLowerCase();let cls='';if(['green','completed','closed','on track','low','live'].some(x=>l.includes(x)))cls='green';else if(['amber','monitoring','pending','medium'].some(x=>l.includes(x)))cls='amber';else if(['red','open','delayed','high'].some(x=>l.includes(x)))cls='red';else cls='blue';return`<span class="pill ${cls}">${esc(text)}</span>`}
