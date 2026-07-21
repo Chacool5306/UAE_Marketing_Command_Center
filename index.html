@@ -227,7 +227,80 @@ function switchPage(){document.querySelectorAll('.page').forEach(p=>p.classList.
 function renderAll(){destroyCharts();renderExecutive();renderMarket();renderSales();renderProduct();renderMarketingActivities();renderMarketingBudget();renderPromotion();renderRetail();renderCompetitor();renderIssue();renderAction();renderCharts()}
 
 // Page Renderers
-function renderExecutive(){const p=document.getElementById('page-executiveSummary');const metrics=['Sell-in','Sell-out','Distribution %','Marketing Budget','Marketing ROAS'].map(byMetric);p.innerHTML=`<div class="grid g4" style="margin-bottom:18px">${metrics.map(kpi).join('')}</div><div class="grid g3"><div class="card span2"><div class="head"><div><h3>Revenue Snapshot</h3><p>SalesPerformance 기반 Sell-in / Sell-out 현황</p></div><span class="pill blue">AED + USD</span></div><div class="body"><div class="chart"><canvas id="execRevenue"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Business Health</h3><p>Status = Green / Amber / Red</p></div></div><div class="body">${healthList(rows('executiveSummary'))}</div></div><div class="card"><div class="head"><div><h3>Market Snapshot</h3><p>MarketStatus 요약</p></div></div><div class="body">${simpleList(rows('marketStatus'),['Indicator','Implication','Action Needed'])}</div></div><div class="card span2"><div class="head"><div><h3>Critical Actions</h3><p>Action Plan에서 High/Medium 우선순위</p></div></div><div class="body">${actionCards(rows('actionPlan').slice(0,3))}</div></div></div>`}
+function renderExecutive(){
+  const p=document.getElementById('page-executiveSummary');
+  const metrics=['Sell-in','Sell-out','Distribution %','Marketing Budget','Marketing ROAS'].map(byMetric);
+
+  p.innerHTML=`
+    <div class="grid g4" style="margin-bottom:18px">
+      ${metrics.map(kpi).join('')}
+    </div>
+
+    <div class="grid g3">
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <h3>Business Health</h3>
+            <p>Status = Green / Amber / Red</p>
+          </div>
+        </div>
+        <div class="body">
+          ${healthList(rows('executiveSummary'))}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <h3>Market Snapshot</h3>
+            <p>MarketStatus 요약</p>
+          </div>
+        </div>
+        <div class="body">
+          ${simpleList(rows('marketStatus'),['Indicator','Implication','Action Needed'])}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <h3>Top Opportunities</h3>
+            <p>매출 성장 기회</p>
+          </div>
+        </div>
+        <div class="body">
+          ${topOpportunities(rows('actionPlan'))}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <div>
+            <h3>Top Risks</h3>
+            <p>주요 리스크 및 경쟁 위협</p>
+          </div>
+        </div>
+        <div class="body">
+          ${topRisks(rows('competitor'))}
+        </div>
+      </div>
+
+      <div class="card span2">
+        <div class="head">
+          <div>
+            <h3>Critical Actions</h3>
+            <p>Action Plan에서 High/Medium 우선순위</p>
+          </div>
+        </div>
+        <div class="body">
+          ${actionCards(rows('actionPlan').slice(0,3))}
+        </div>
+      </div>
+
+    </div>
+  `;
+}
 function renderMarket(){document.getElementById('page-marketStatus').innerHTML=`<div class="grid g3"><div class="card"><div class="head"><div><h3>Market Size</h3><p>AED + USD</p></div></div><div class="body">${marketSizeCard()}</div></div><div class="card"><div class="head"><div><h3>Market Sections</h3><p>Section breakdown</p></div></div><div class="body"><div class="chart sm"><canvas id="marketSectionChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Trend / Event Notes</h3><p>Implication & action</p></div></div><div class="body">${simpleList(rows('marketStatus'),['Section','Indicator','Action Needed'])}</div></div><div class="card span3"><div class="head"><div><h3>Market Status Table</h3><p>02_MarketStatus CSV</p></div></div><div class="body">${table(rows('marketStatus'),['Date','Section','Indicator','Value AED','Value USD','Source','Implication','Action Needed','Owner'])}</div></div></div>`}
 function renderSales(){const data=rows('sales');document.getElementById('page-sales').innerHTML=`<div class="grid g4" style="margin-bottom:18px">${salesKpis(data)}</div><div class="grid g2"><div class="card"><div class="head"><div><h3>Sales by Type</h3><p>Sell-in / Sell-out revenue</p></div></div><div class="body"><div class="chart"><canvas id="salesTypeChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Sales by Channel</h3><p>Actual Sales AED 기준</p></div></div><div class="body"><div class="chart"><canvas id="salesChannelChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Distribution %</h3><p>Retailer coverage</p></div></div><div class="body"><div class="chart"><canvas id="distributionChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>SKU Performance</h3><p>Top SKU by tracked revenue</p></div></div><div class="body"><div class="chart"><canvas id="skuChart"></canvas></div></div></div><div class="card span2"><div class="head"><div><h3>Sales Performance Table</h3><p>03_SalesPerformance CSV</p></div></div><div class="body">${table(data,['Month','Sales Type','Data Source','Channel','Retailer / Platform','Category','SKU','Target Sales AED','Target Sales USD','Actual Sales AED','Actual Sales USD','Quantity','Growth %','Distribution %','Universe Stores','Covered Stores','Note','Owner'])}</div></div></div>`}
 function renderProduct(){const data=rows('productPricing');document.getElementById('page-productPricing').innerHTML=`<div class="grid g2"><div class="card"><div class="head"><div><h3>Price Gap %</h3><p>DORCO vs competitor</p></div></div><div class="body"><div class="chart"><canvas id="priceGapChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Portfolio Count</h3><p>Category / segment view</p></div></div><div class="body"><div class="chart"><canvas id="portfolioChart"></canvas></div></div></div><div class="card span2"><div class="head"><div><h3>Product Line-up & Pricing Table</h3><p>04_ProductLineupPricing CSV</p></div></div><div class="body">${table(data,['Category','SKU','Segment','SKU Status','Dorco Price AED','Dorco Price USD','Competitor Brand','Competitor SKU','Competitor Price AED','Competitor Price USD','Price Gap %','Positioning','Issue','Action'])}</div></div></div>`}
