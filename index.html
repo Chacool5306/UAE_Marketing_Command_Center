@@ -313,7 +313,52 @@ function renderIssue(){const data=rows('issueTracker');document.getElementById('
 function renderAction(){const data=rows('actionPlan');document.getElementById('page-actionPlan').innerHTML=`<div class="grid g2"><div class="card"><div class="head"><div><h3>Action Status</h3><p>진행 상태</p></div></div><div class="body"><div class="chart"><canvas id="actionStatusChart"></canvas></div></div></div><div class="card"><div class="head"><div><h3>Expected Revenue Impact</h3><p>AED + USD</p></div></div><div class="body"><div class="chart"><canvas id="impactChart"></canvas></div></div></div><div class="card span2"><div class="head"><div><h3>Insight & Action Cards</h3><p>데이터 → 인사이트 → 액션</p></div></div><div class="body">${actionCards(data)}</div></div><div class="card span2"><div class="head"><div><h3>Insight & Action Plan Table</h3><p>11_InsightActionPlan CSV</p></div></div><div class="body">${table(data,['Date','Source Menu','Insight','Evidence / Data Point','Action','Owner','Due Date','Priority','Status','Expected Revenue Impact AED','Expected Revenue Impact USD','Decision Needed','Related Link','Comment'])}</div></div></div>`}
 
 // Components
-function kpi(r){const metric=s(get(r,['Metric']))||'KPI';const status=s(get(r,['Status']));const valueAED=n(get(r,['Value AED']));const valueUSD=n(get(r,['Value USD']));const usdOnly=n(get(r,['Value USD Only']));const ach=get(r,['Achievement %']);let main='-';let sub='';if(valueAED){main=money(valueAED,'AED');sub=money(valueUSD,'USD')}else if(usdOnly){main=money(usdOnly,'USD');sub='USD only'}else if(metric.toLowerCase().includes('distribution')){main=pct(ach);sub='Distribution'}else if(metric.toLowerCase().includes('roas')){
+function kpi(r){const metric=s(get(r,['Metric']))||'KPI';const status=s(get(r,['Status']));const valueAED=n(get(r,['Value AED']));const valueUSD=n(get(r,['Value USD']));const usdOnly=n(get(r,['Value USD Only']));const ach=get(r,['Achievement %']);let main='-';let sub='';function kpi(r){
+  const metric=s(get(r,['Metric']))||'KPI';
+  const status=s(get(r,['Status']));
+  const valueAED=n(get(r,['Value AED']));
+  const valueUSD=n(get(r,['Value USD']));
+  const usdOnly=n(get(r,['Value USD Only']));
+  const ach=get(r,['Achievement %']);
+
+  let main='-';
+  let sub='';
+
+  if(valueUSD){
+    main=money(valueUSD,'USD');
+    sub=money(valueAED,'AED');
+  }
+  else if(valueAED){
+    main=money(valueAED/fx(),'USD');
+    sub=money(valueAED,'AED');
+  }
+  else if(usdOnly){
+    main=money(usdOnly,'USD');
+    sub='USD only';
+  }
+  else if(metric.toLowerCase().includes('distribution')){
+    main=pct(ach);
+    sub='Distribution';
+  }
+  else if(metric.toLowerCase().includes('roas')){
+    main=pct(ach);
+    sub='ROAS Achievement';
+  }
+
+  return`
+    <div class="card kpi">
+      <div class="body">
+        <p class="kpi-label">${esc(metric)}</p>
+        <div class="kpi-value">${esc(main)}</div>
+        <span class="kpi-sub">${esc(sub)}</span>
+        <div class="kpi-meta">
+          <span>${statusPill(status)}</span>
+          <span>${esc(s(get(r,['Note']))||'')}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}else if(usdOnly){main=money(usdOnly,'USD');sub='USD only'}else if(metric.toLowerCase().includes('distribution')){main=pct(ach);sub='Distribution'}else if(metric.toLowerCase().includes('roas')){
   main=pct(ach);
   sub='ROAS Achievement';
 }
