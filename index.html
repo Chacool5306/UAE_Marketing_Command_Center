@@ -501,7 +501,37 @@ function topRisks(data){
     </div>
   `;
 }  
-function actionCards(data){if(!data.length)return empty('No action plan','ActionPlan CSV를 연결하세요.');return`<div class="list">${data.map(r=>`<div class="item"><h4>${esc(get(r,['Insight'])||'-')} ${statusPill(get(r,['Priority']))}</h4><p><b>Action:</b> ${esc(get(r,['Action'])||'-')}<br><b>Owner:</b> ${esc(get(r,['Owner'])||'-')} · <b>Due:</b> ${esc(get(r,['Due Date'])||'-')}<br><b>Impact:</b> ${money(n(get(r,['Expected Revenue Impact AED'])),'AED')} / ${money(n(get(r,['Expected Revenue Impact USD'])),'USD')}</p></div>`).join('')}</div>`}
+function actionCards(data){
+  if(!data.length)return empty('No action plan','ActionPlan CSV를 연결하세요.');
+
+  return`
+  <div class="list">
+    ${data.map(r=>`
+      <div class="item">
+        <h4>
+          ${esc(get(r,['Insight'])||'-')}
+          ${statusPill(get(r,['Priority']))}
+        </h4>
+
+        <p>
+          <b>Action:</b> ${esc(get(r,['Action'])||'-')}
+          <br>
+
+          <b>Owner:</b> ${esc(get(r,['Owner'])||'-')}
+          ·
+          <b>Due:</b> ${esc(get(r,['Due Date'])||'-')}
+          <br>
+
+          <b>Impact:</b>
+          ${money(n(get(r,['Expected Revenue Impact AED'])),'AED')}
+          /
+          ${money(n(get(r,['Expected Revenue Impact USD'])),'USD')}
+        </p>
+      </div>
+    `).join('')}
+  </div>
+  `;
+}
 function mediaCards(data,type){if(!data.length)return empty('No media data','Photo/Video/Drive links can be connected from Google Sheets.');return`<div class="media-grid">${data.slice(0,9).map(r=>{const title= type==='retail'?`${get(r,['Retailer'])||''} · ${get(r,['Store'])||''}`:get(r,['Campaign'])||get(r,['Promotion Name'])||'Media';const media=get(r,['Media Type'])||get(r,['Visibility Type'])||'Photo';const url=get(r,['Thumbnail Link','Photo Link','Video Link','Drive Folder Link','Competitor Photo Link','Photo / Video Link']);return`<div class="media-card"><div class="thumb">${esc(media)}</div><div class="inner"><h4>${esc(title)}</h4><p>${esc(get(r,['Date'])||'')} · ${esc(get(r,['Channel','City'])||'')}</p>${url?`<a href="${esc(url)}" target="_blank" rel="noopener">Open Link</a>`:`<span class="mini">Link not connected yet</span>`}</div></div>`}).join('')}</div>`}
 function kanban(data,statusCol,titleCol){const groups=['Open','Monitoring','Closed'];return`<div class="kanban">${groups.map(g=>{const arr=data.filter(r=>s(get(r,[statusCol])).toLowerCase()===g.toLowerCase()||(g==='Closed'&&['completed','closed'].includes(s(get(r,[statusCol])).toLowerCase())));return`<div class="kanban-col"><h4>${g}<span class="pill">${arr.length}</span></h4>${arr.map(r=>`<div class="item"><h4>${esc(get(r,[titleCol])||'-')}</h4><p>${esc(get(r,['Next Action'])||get(r,['Impact'])||'')}</p></div>`).join('')||'<span class="mini">No items</span>'}</div>`}).join('')}</div>`}
 function table(data,cols){if(!data.length)return empty('No table data','CSV URL을 연결하거나 sample data를 사용하세요.');const available=cols.filter(c=>data.some(r=>get(r,[c])!==undefined));const final=available.length?available:Object.keys(data[0]).slice(0,10);return`<div class="table-wrap"><table><thead><tr>${final.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${data.map(r=>`<tr>${final.map(c=>`<td class="${isNum(c)?'num':''}">${cell(get(r,[c]),c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
