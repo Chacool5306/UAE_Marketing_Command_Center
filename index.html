@@ -436,7 +436,32 @@ function marketingKpis(data){
   })
   .join('');
 }
-function marketSizeCard(){const r=rows('marketStatus').find(x=>n(get(x,['Value AED']))>0)||{};return`<div class="list"><div class="item"><h4>${esc(get(r,['Indicator'])||'Market Size')}</h4><p><b>${money(n(get(r,['Value AED'])),'AED')}</b><br>${money(n(get(r,['Value USD'])),'USD')}</p></div><div class="item"><h4>Source</h4><p>${esc(get(r,['Source'])||'-')}</p></div></div>`}
+function marketSizeCard(){
+
+  const r = rows('marketStatus')
+    .find(x => n(get(x,['Value AED'])) > 0) || {};
+
+  return `
+    <div class="list">
+
+      <div class="item">
+        <h4>${esc(get(r,['Indicator']) || 'Market Size')}</h4>
+
+        <p>
+          <b>${money(n(get(r,['Value USD'])),'USD')}</b>
+          <br>
+          ${money(n(get(r,['Value AED'])),'AED')}
+        </p>
+      </div>
+
+      <div class="item">
+        <h4>Source</h4>
+        <p>${esc(get(r,['Source']) || '-')}</p>
+      </div>
+
+    </div>
+  `;
+}
 function simpleList(data,cols){if(!data.length)return empty('No data','CSV URL을 연결하거나 sample data를 사용하세요.');return`<div class="list">${data.slice(0,5).map(r=>`<div class="item"><h4>${esc(get(r,[cols[0]])||'-')}</h4><p>${cols.slice(1).map(c=>esc(get(r,[c])||'')).filter(Boolean).join(' · ')}</p></div>`).join('')}</div>`}
 function healthList(data){if(!data.length)return empty('No KPI data','ExecutiveSummary CSV를 연결하세요.');return`<div class="list">${data.map(r=>`<div class="item"><h4>${esc(get(r,['Metric']))} ${statusPill(get(r,['Status']))}</h4><p>${esc(get(r,['Note'])||'')}</p></div>`).join('')}</div>`}
 function topOpportunities(data){
