@@ -643,7 +643,26 @@ function chartRetail(){const data=rows('retail');bar('retailDistributionChart',d
 '%');bar('facingChart',data.map(r=>({label:get(r,['Store'])||get(r,['Retailer'])||'Store',value:n(get(r,['Facing']))})),'Facing')}
 function chartCompetitor(){const data=rows('competitor');doughnut('threatChart',count(data,['Threat Level']));bar('competitorBrandChart',count(data,['Competitor Brand']),'Activities')}
 function chartIssue(){const data=rows('issueTracker');doughnut('issuePriorityChart',count(data,['Priority']));doughnut('issueStatusChart',count(data,['Status']))}
-function chartAction(){const data=rows('actionPlan');doughnut('actionStatusChart',count(data,['Status']));bar('impactChart',data.map(r=>({label:get(r,['Insight'])||'Action',value:n(get(r,['Expected Revenue Impact AED']))})),'AED')}
+function chartAction(){
+
+  const data = rows('actionPlan');
+
+  doughnut(
+    'actionStatusChart',
+    count(data,['Status'])
+  );
+
+  bar(
+    'impactChart',
+    data.map(r => ({
+      label:get(r,['Insight']) || 'Action',
+      value:n(get(r,['Expected Revenue Impact USD']))
+    })),
+    'USD'
+  );
+
+}
+
 function ctx(id){const c=document.getElementById(id);return c?c.getContext('2d'):null}
 function bar(id,arr,label,color='#2563eb'){const c=ctx(id);if(!c)return;const items=(arr||[]).filter(x=>x.label!==undefined&&Number.isFinite(Number(x.value)));if(!items.length)return chartEmpty(id);state.charts[id]=new Chart(c,{type:'bar',data:{labels:items.map(x=>x.label),datasets:[{label,data:items.map(x=>x.value),backgroundColor:color,borderRadius:9,maxBarThickness:50}]},options:opts()})}
 function doughnut(id,arr,colors){const c=ctx(id);if(!c)return;const items=(arr||[]).filter(x=>x.label!==undefined&&Number(x.value)>0);if(!items.length)return chartEmpty(id);state.charts[id]=new Chart(c,{type:'doughnut',data:{labels:items.map(x=>x.label),datasets:[{data:items.map(x=>x.value),backgroundColor:colors||['#2563eb','#7c3aed','#f97316','#059669','#64748b','#dc2626'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,usePointStyle:true}}}}})}
