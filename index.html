@@ -409,7 +409,18 @@ function table(data,cols){if(!data.length)return empty('No table data','CSV URLì
 function empty(t,m){return`<div class="empty"><div><b>${esc(t)}</b><span>${esc(m)}</span></div></div>`}
 
 // Charts
-function renderCharts(){chartExec();chartMarket();chartSales();chartProduct();chartMarketingActivities();chartBudget();chartPromotion();chartRetail();chartCompetitor();chartIssue();chartAction()}
+function renderCharts(){
+  chartMarket();
+  chartSales();
+  chartProduct();
+  chartMarketingActivities();
+  chartBudget();
+  chartPromotion();
+  chartRetail();
+  chartCompetitor();
+  chartIssue();
+  chartAction();
+}
 function chartExec(){const ds=rows('sales');bar('execRevenue',group(ds.filter(r=>['Sell-in','Sell-out'].includes(get(r,['Sales Type']))),['Sales Type'],['Actual Sales AED']),'AED')}
 function chartMarket(){doughnut('marketSectionChart',count(rows('marketStatus'),['Section']))}
 function chartSales(){const data=rows('sales');bar('salesTypeChart',group(data.filter(r=>get(r,['Sales Type'])!=='Distribution'),['Sales Type'],['Actual Sales AED']),'AED');bar('salesChannelChart',group(data.filter(r=>n(get(r,['Actual Sales AED']))>0),['Channel'],['Actual Sales AED']),'AED');bar('distributionChart',data.filter(r=>n(get(r,['Distribution %']))>0).map(r=>({label:get(r,['Retailer / Platform','Channel'])||'Retailer',value:percentPoint(get(r,['Distribution %']))})),'%');bar('skuChart',group(data.filter(r=>n(get(r,['Actual Sales AED']))>0),['SKU'],['Actual Sales AED']),'AED')}
