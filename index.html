@@ -502,30 +502,33 @@ function topRisks(data){
   `;
 }  
 function actionCards(data){
-  if(!data.length)return empty('No action plan','ActionPlan CSV를 연결하세요.');
 
-  return`
+  if(!data.length){
+    return empty('No action plan','ActionPlan CSV를 연결하세요.');
+  }
+
+  return `
   <div class="list">
     ${data.map(r=>`
       <div class="item">
         <h4>
-          ${esc(get(r,['Insight'])||'-')}
+          ${esc(get(r,['Insight']) || '-')}
           ${statusPill(get(r,['Priority']))}
         </h4>
 
         <p>
-          <b>Action:</b> ${esc(get(r,['Action'])||'-')}
+          <b>Action:</b> ${esc(get(r,['Action']) || '-')}
           <br>
 
-          <b>Owner:</b> ${esc(get(r,['Owner'])||'-')}
+          <b>Owner:</b> ${esc(get(r,['Owner']) || '-')}
           ·
-          <b>Due:</b> ${esc(get(r,['Due Date'])||'-')}
+          <b>Due:</b> ${esc(get(r,['Due Date']) || '-')}
           <br>
 
           <b>Impact:</b>
-          ${money(n(get(r,['Expected Revenue Impact AED'])),'AED')}
-          /
           ${money(n(get(r,['Expected Revenue Impact USD'])),'USD')}
+          /
+          ${money(n(get(r,['Expected Revenue Impact AED'])),'AED')}
         </p>
       </div>
     `).join('')}
