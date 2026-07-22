@@ -555,7 +555,60 @@ function renderCharts(){
 }
 function chartExec(){const ds=rows('sales');bar('execRevenue',group(ds.filter(r=>['Sell-in','Sell-out'].includes(get(r,['Sales Type']))),['Sales Type'],['Actual Sales AED']),'AED')}
 function chartMarket(){doughnut('marketSectionChart',count(rows('marketStatus'),['Section']))}
-function chartSales(){const data=rows('sales');bar('salesTypeChart',group(data.filter(r=>get(r,['Sales Type'])!=='Distribution'),['Sales Type'],['Actual Sales AED']),'AED');bar('salesChannelChart',group(data.filter(r=>n(get(r,['Actual Sales AED']))>0),['Channel'],['Actual Sales AED']),'AED');bar('distributionChart',data.filter(r=>n(get(r,['Distribution %']))>0).map(r=>({label:get(r,['Retailer / Platform','Channel'])||'Retailer',value:percentPoint(get(r,['Distribution %']))})),'%');bar('skuChart',group(data.filter(r=>n(get(r,['Actual Sales AED']))>0),['SKU'],['Actual Sales AED']),'AED')}
+function chartSales(){
+
+  const data = rows('sales');
+
+  bar(
+    'salesTypeChart',
+    group(
+      data.filter(r =>
+        get(r,['Sales Type']) !== 'Distribution'
+      ),
+      ['Sales Type'],
+      ['Actual Sales USD']
+    ),
+    'USD'
+  );
+
+  bar(
+    'salesChannelChart',
+    group(
+      data.filter(r =>
+        n(get(r,['Actual Sales USD'])) > 0
+      ),
+      ['Channel'],
+      ['Actual Sales USD']
+    ),
+    'USD'
+  );
+
+  bar(
+    'distributionChart',
+    data
+      .filter(r =>
+        n(get(r,['Distribution %'])) > 0
+      )
+      .map(r => ({
+        label:get(r,['Retailer / Platform','Channel']) || 'Retailer',
+        value:percentPoint(get(r,['Distribution %']))
+      })),
+    '%'
+  );
+
+  bar(
+    'skuChart',
+    group(
+      data.filter(r =>
+        n(get(r,['Actual Sales USD'])) > 0
+      ),
+      ['SKU'],
+      ['Actual Sales USD']
+    ),
+    'USD'
+  );
+
+}
 function chartProduct(){const data=rows('productPricing');bar('priceGapChart',data.map(r=>({label:get(r,['SKU'])||'SKU',value:n(get(r,['Price Gap %']))*100})),'%');doughnut('portfolioChart',count(data,['Category']))}
 function chartMarketingActivities(){const data=rows('marketingActivities');bar('campaignRoasChart',data.map(r=>({label:get(r,['Campaign'])||'Campaign',value:n(get(r,['ROAS']))})),'ROAS');doughnut('activitySpendChart',group(data,['Channel'],['Actual Spend USD']))}
 function chartBudget(){const data=rows('marketingBudget');const totalBudget=sum(data,['Budget USD']),actual=sum(data,['Actual USD']);doughnut('budgetUtilChart',[{label:'Actual',value:actual},{label:'Remaining',value:Math.max(totalBudget-actual,0)}]);doughnut('budgetChannelChart',group(data,['Channel'],['Budget USD']));doughnut('funnelBudgetChart',group(data,['Funnel Stage'],['Budget USD']))}
