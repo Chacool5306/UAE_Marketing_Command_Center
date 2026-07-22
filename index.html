@@ -405,7 +405,37 @@ function salesKpis(data){
     </div>`
   ].join('');
 }
-function marketingKpis(data){const campaigns=data.length;const spend=sum(data,['Actual Spend USD']);const sales=sum(data,['Sales AED']);const roas=spend?(sales/fx())/spend:0;return[`Campaigns|${campaigns}|Total count`,`Actual Spend|${money(spend,'USD')}|USD only`,`Campaign Sales|${money(sales,'AED')}|${money(sales/fx(),'USD')}`,`ROAS|${roas.toFixed(1)}x|Calculated`].map((x,i)=>{const [a,b,c]=x.split('|');return`<div class="card kpi"><div class="body"><p class="kpi-label">${a}</p><div class="kpi-value">${b}</div><span class="kpi-sub">${c}</span></div></div>`}).join('')}
+function marketingKpis(data){
+
+  const campaigns=data.length;
+
+  const spend=sum(data,['Actual Spend USD']);
+
+  const salesUSD=sum(data,['Sales USD']);
+  const salesAED=sum(data,['Sales AED']);
+
+  const roas=spend ? salesUSD/spend : 0;
+
+  return[
+    `Campaigns|${campaigns}|Total count`,
+    `Actual Spend|${money(spend,'USD')}|USD only`,
+    `Campaign Sales|${money(salesUSD,'USD')}|${money(salesAED,'AED')}`,
+    `ROAS|${roas.toFixed(1)}x|Calculated`
+  ]
+  .map(x=>{
+      const [a,b,c]=x.split('|');
+
+      return `
+      <div class="card kpi">
+        <div class="body">
+          <p class="kpi-label">${a}</p>
+          <div class="kpi-value">${b}</div>
+          <span class="kpi-sub">${c}</span>
+        </div>
+      </div>`;
+  })
+  .join('');
+}
 function marketSizeCard(){const r=rows('marketStatus').find(x=>n(get(x,['Value AED']))>0)||{};return`<div class="list"><div class="item"><h4>${esc(get(r,['Indicator'])||'Market Size')}</h4><p><b>${money(n(get(r,['Value AED'])),'AED')}</b><br>${money(n(get(r,['Value USD'])),'USD')}</p></div><div class="item"><h4>Source</h4><p>${esc(get(r,['Source'])||'-')}</p></div></div>`}
 function simpleList(data,cols){if(!data.length)return empty('No data','CSV URL을 연결하거나 sample data를 사용하세요.');return`<div class="list">${data.slice(0,5).map(r=>`<div class="item"><h4>${esc(get(r,[cols[0]])||'-')}</h4><p>${cols.slice(1).map(c=>esc(get(r,[c])||'')).filter(Boolean).join(' · ')}</p></div>`).join('')}</div>`}
 function healthList(data){if(!data.length)return empty('No KPI data','ExecutiveSummary CSV를 연결하세요.');return`<div class="list">${data.map(r=>`<div class="item"><h4>${esc(get(r,['Metric']))} ${statusPill(get(r,['Status']))}</h4><p>${esc(get(r,['Note'])||'')}</p></div>`).join('')}</div>`}
