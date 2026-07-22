@@ -612,7 +612,29 @@ function chartSales(){
 function chartProduct(){const data=rows('productPricing');bar('priceGapChart',data.map(r=>({label:get(r,['SKU'])||'SKU',value:n(get(r,['Price Gap %']))*100})),'%');doughnut('portfolioChart',count(data,['Category']))}
 function chartMarketingActivities(){const data=rows('marketingActivities');bar('campaignRoasChart',data.map(r=>({label:get(r,['Campaign'])||'Campaign',value:n(get(r,['ROAS']))})),'ROAS');doughnut('activitySpendChart',group(data,['Channel'],['Actual Spend USD']))}
 function chartBudget(){const data=rows('marketingBudget');const totalBudget=sum(data,['Budget USD']),actual=sum(data,['Actual USD']);doughnut('budgetUtilChart',[{label:'Actual',value:actual},{label:'Remaining',value:Math.max(totalBudget-actual,0)}]);doughnut('budgetChannelChart',group(data,['Channel'],['Budget USD']));doughnut('funnelBudgetChart',group(data,['Funnel Stage'],['Budget USD']))}
-function chartPromotion(){const data=rows('promotion');bar('promoRoiChart',data.map(r=>({label:get(r,['Promotion Name'])||'Promo',value:n(get(r,['ROI']))})),'ROI');bar('promoSalesChart',data.map(r=>({label:get(r,['Promotion Name'])||'Promo',value:n(get(r,['Promotion Sales AED']))})),'AED')}
+function chartPromotion(){
+
+  const data = rows('promotion');
+
+  bar(
+    'promoRoiChart',
+    data.map(r => ({
+      label:get(r,['Promotion Name']) || 'Promo',
+      value:n(get(r,['ROI']))
+    })),
+    'ROI'
+  );
+
+  bar(
+    'promoSalesChart',
+    data.map(r => ({
+      label:get(r,['Promotion Name']) || 'Promo',
+      value:n(get(r,['Promotion Sales USD']))
+    })),
+    'USD'
+  );
+
+}
 function chartRetail(){const data=rows('retail');bar('retailDistributionChart',data.map(r=>({label:get(r,['Retailer'])||'Retailer',value:percentPoint(get(r,['Distribution %']))})),'%');bar('sosChart',
   data.map(r=>({
     label:get(r,['Retailer'])||'Retailer',
