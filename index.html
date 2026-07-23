@@ -112,7 +112,31 @@ body.locked .shell{
   </style>
 </head>
 <body class="locked">
-<div class="shell">
+<div id="authScreen">
+  <div id="authBox">
+
+    <h2>DORCO UAE Market Command Center</h2>
+
+    <p>
+      Internal Dashboard<br>
+      Password Required
+    </p>
+
+    <input
+      id="authPassword"
+      type="password"
+      placeholder="Password"
+    />
+
+    <button id="authButton">
+      Access Dashboard
+    </button>
+
+    <div id="authError"></div>
+
+  </div>
+</div>
+  <div class="shell">
   <aside class="side" id="sidebar">
     <div class="brand"><div class="logo">D</div><div><h1>DORCO UAE<br>Command Center</h1><p>Google Sheets CSV Dashboard</p></div></div>
     <div class="nav-label">Dashboard Pages</div><nav class="nav" id="nav"></nav>
