@@ -885,7 +885,24 @@ function statusPill(v){const text=s(v)||'-';const l=text.toLowerCase();let cls='
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function setLoading(x){loader.style.display=x?'block':'none'}
 
-document.addEventListener('DOMContentLoaded',init);
+document.addEventListener(
+  '*OMContentLoaded',
+  ()=>{
+
+    con*t logoutBtn =
+      document.getEl*mentById("logout");
+
+    if(logout*tn){
+      logoutBtn.addEventListe*er(
+        "click",
+        logou*Dashboard
+      );
+    }
+
+    init*uth();
+
+  }
+);
 </script>
 </body>
 </html>
