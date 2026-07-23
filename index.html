@@ -159,7 +159,78 @@ Google Sheets와 연동되어 모든 데이터가 자동 업데이트됩니다.
   </main>
 </div>
 <script>
-// Configuration
+/* ================= AUTH ================= */
+
+const AUTH = {
+  PASSWORD: *dorco3611",
+  SESSION_KEY: "uae_da*hboard_access"
+};
+
+function unlock*ashboard(){
+
+  document.body.class*ist.remove("locked");
+
+  const aut* = document.getElementById("authSc*een");
+
+  if(auth){
+    auth.style*display="none";
+  }
+
+  init();
+}
+
+*unction logoutDashboard(){
+  sessi*nStorage.removeItem(AUTH.SESSION_K*Y);
+  location.reload();
+}
+
+functi*n initAuth(){
+
+  if(sessionStorage*getItem(AUTH.SESSION_KEY)==="1"){
+*   unlockDashboard();
+    return;
+* }
+
+  const input=document.getElem*ntById("authPassword");
+  const bu*ton=document.getElementById("authB*tton");
+  const error=document.get*lementById("authError");
+
+  functi*n login(){
+
+    if(input.value===A*TH.PASSWORD){
+
+      sessionStorag*.setItem(
+        AUTH.SESSION_KEY*
+        "1"
+      );
+
+      unloc*Dashboard();
+
+    }else{
+
+      er*or.textContent =
+        "비밀번호가 올바*지 않습니다.";
+
+      input.value="";
+
+*   }
+  }
+
+  button.addEventListene*(
+    "click",
+    login
+  );
+
+  i*put.addEventListener(
+    "keydown*,
+    e=>{
+      if(e.key==="Enter*){
+        login();
+      }
+    }
+* );
+}
+  // Configuration
 const SHEET_URLS={
   executiveSummary:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTwg_1NMDlg8p-N0U-G5SzgVY4Ve4_mdCF7Hvn-P1AyCcR94npm-vMRJX2wKhN1GTlcWHyozJkfJg4Z/pub?gid=40940517&single=true&output=csv",
   marketStatus:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTwg_1NMDlg8p-N0U-G5SzgVY4Ve4_mdCF7Hvn-P1AyCcR94npm-vMRJX2wKhN1GTlcWHyozJkfJg4Z/pub?gid=204095130&single=true&output=csv",
