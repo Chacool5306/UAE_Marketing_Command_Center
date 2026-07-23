@@ -910,20 +910,22 @@ function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&
 function setLoading(x){loader.style.display=x?'block':'none'}
 
 document.addEventListener(
-  '*OMContentLoaded',
-  ()=>{
+  "DOMContentLoaded",
+  () => {
 
-    con*t logoutBtn =
-      document.getEl*mentById("logout");
+    const logoutBtn =
+      document.getElementById("logout");
 
-    if(logout*tn){
-      logoutBtn.addEventListe*er(
+    if (logoutBtn) {
+
+      logoutBtn.addEventListener(
         "click",
-        logou*Dashboard
+        logoutDashboard
       );
+
     }
 
-    init*uth();
+    initAuth();
 
   }
 );
