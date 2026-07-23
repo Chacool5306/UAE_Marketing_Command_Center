@@ -162,72 +162,97 @@ Google Sheets와 연동되어 모든 데이터가 자동 업데이트됩니다.
 /* ================= AUTH ================= */
 
 const AUTH = {
-PASSWORD: "dorco3611",  SESSION_KEY: "uae_dashboard_access"
+  PASSWORD: "dorco3611",
+  SESSION_KEY: "uae_dashboard_access"
 };
 
-function unlock*ashboard(){
+function unlockDashboard() {
 
-  document.body.class*ist.remove("locked");
+  document.body.classList.remove("locked");
 
-  const aut* = document.getElementById("authSc*een");
+  const auth =
+    document.getElementById("authScreen");
 
-  if(auth){
-    auth.style*display="none";
+  if (auth) {
+    auth.style.display = "none";
   }
 
   init();
 }
 
-*unction logoutDashboard(){
-  sessi*nStorage.removeItem(AUTH.SESSION_K*Y);
+function logoutDashboard() {
+
+  sessionStorage.removeItem(
+    AUTH.SESSION_KEY
+  );
+
   location.reload();
 }
 
-functi*n initAuth(){
+function initAuth() {
 
-  if(sessionStorage*getItem(AUTH.SESSION_KEY)==="1"){
-*   unlockDashboard();
+  if (
+    sessionStorage.getItem(
+      AUTH.SESSION_KEY
+    ) === "1"
+  ) {
+
+    unlockDashboard();
     return;
-* }
+  }
 
-  const input=document.getElem*ntById("authPassword");
-  const bu*ton=document.getElementById("authB*tton");
-  const error=document.get*lementById("authError");
+  const input =
+    document.getElementById(
+      "authPassword"
+    );
 
-  functi*n login(){
+  const button =
+    document.getElementById(
+      "authButton"
+    );
 
-    if(input.value===A*TH.PASSWORD){
+  const error =
+    document.getElementById(
+      "authError"
+    );
 
-      sessionStorag*.setItem(
-        AUTH.SESSION_KEY*
+  function login() {
+
+    if (
+      input.value === AUTH.PASSWORD
+    ) {
+
+      sessionStorage.setItem(
+        AUTH.SESSION_KEY,
         "1"
       );
 
-      unloc*Dashboard();
+      unlockDashboard();
 
-    }else{
+    } else {
 
-      er*or.textContent =
-        "비밀번호가 올바*지 않습니다.";
+      error.textContent =
+        "비밀번호가 올바르지 않습니다.";
 
-      input.value="";
-
-*   }
+      input.value = "";
+    }
   }
 
-  button.addEventListene*(
+  button.addEventListener(
     "click",
     login
   );
 
-  i*put.addEventListener(
-    "keydown*,
-    e=>{
-      if(e.key==="Enter*){
+  input.addEventListener(
+    "keydown",
+    (e) => {
+
+      if (e.key === "Enter") {
         login();
       }
+
     }
-* );
+  );
 }
   // Configuration
 const SHEET_URLS={
